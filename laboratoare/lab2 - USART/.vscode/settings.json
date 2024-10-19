@@ -1,0 +1,8 @@
+{
+    "r.lsp.promptToInstall": false,
+    "files.associations": {
+        "*.ejs": "html",
+        "string.h": "c",
+        "usart.h": "c"
+    }
+}
