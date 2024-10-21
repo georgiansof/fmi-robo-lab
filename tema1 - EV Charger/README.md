@@ -18,10 +18,10 @@ Poze setup hardware:
 ![WhatsApp Image 2024-10-21 at 08 09 58_eb69819b](https://github.com/user-attachments/assets/00a03d3f-e1f7-41cf-8b42-bf055082b50d)
 
 Funcționalitate:
+[Link aici sau pe thumbnail](https://youtu.be/mcoNxDeWV3o)
 [![Watch the video](https://img.youtube.com/vi/mcoNxDeWV3o/maxresdefault.jpg)](https://youtu.be/mcoNxDeWV3o)
 
 Schema electrica: (realizată în TinkerCAD):
-[Link aici sau pe poza](https://youtu.be/mcoNxDeWV3o)
 ![image](https://github.com/user-attachments/assets/038f27eb-0a4b-44f7-8214-baf15c77566b)
 
 Limitări: - overflow rapid din cauza functiei millis, care returneaza la precizie de miime de secunda. In 32.7 de secunde millis deja returneaza o valoare care provoaca overflow variabilelor long (fara unsigned) si la 65.5 isi da rollover.
