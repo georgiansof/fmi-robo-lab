@@ -9,8 +9,8 @@
 #define PIN_BLUE_LED_TWENTYFIVE 10
 
 #define chargingTime 12000
-#define forceStopTime 2000
-
+#define FORCE_STOP_TIME 1000
+#define FOUR_LEDS_BLINKING_TIME 4000
 
 int startButtonState = HIGH;
 int lastStartButtonState = HIGH;
@@ -23,7 +23,7 @@ unsigned long lastStartDebounceTime = 0;
 unsigned long lastStopDebounceTime = 0;
 
 unsigned long debounceDelay = 50;
-unsigned long debounceDelayStop = 1000;
+unsigned long debounceDelayStop = FORCE_STOP_TIME;
 
 long chargingTimerStart = 0;
 
@@ -113,14 +113,14 @@ void loop() {
         
     }
     else
-      if(charging && stopButtonState == LOW && millis() - stopButtonConstantStateTimestamp >= forceStopTime) {
+      if(charging && stopButtonState == LOW && millis() - stopButtonConstantStateTimestamp >= FORCE_STOP_TIME) {
         StopChargingForce();
         stopButtonConstantStateTimestamp = millis();
       }
   }
 
   if(millis() - chargingTimerStart > chargingTime) {
-    if(millis() - chargingTimerStart <= chargingTime + 4000) {
+    if(millis() - chargingTimerStart <= chargingTime + FOUR_LEDS_BLINKING_TIME) {
       blueLedBlinking25 = true;
       blueLedBlinking50 = true;
       blueLedBlinking75 = true;
