@@ -5,7 +5,8 @@ La final, vor clipi toate 3 împreună, iar după 3 clipiri se vor stinge și st
 
 Butoanele de start și stop folosesc software debouncing, iar cel de stop funcționează prin longpress.
 
-Componente: Arduino UNO, 4x LED albastru, 1x LED RGB catod comun, \ 
+Componente: Arduino UNO, 4x LED albastru, 1x LED RGB catod comun, 
+
 Rezistente 100 ohm: 5x rezistență 100Ohm pentru fiecare LED albastru și pentru componenta Blue a LED-ului RGB, încă 2x rezistențe înseriate 100Ohm pentru fiecare din componentele Red și Green ale LED-ului RGB. Total: 9 rezistențe 100Ohm. \
 Rezistente 1K: 1x pentru fiecare buton (total 2).
 2x Buton 
