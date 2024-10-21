@@ -1,2 +1,0 @@
-led rgb catod comun (-) linia 35
-rezistente in serie (2x 100 ohm) pentru ledurile care nu sunt albastre
