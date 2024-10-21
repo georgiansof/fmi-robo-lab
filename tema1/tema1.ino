@@ -23,26 +23,27 @@ unsigned long lastStartDebounceTime = 0;
 unsigned long lastStopDebounceTime = 0;
 
 unsigned long debounceDelay = 50;
+unsigned long debounceDelayStop = 1000;
 
 long chargingTimerStart = 0;
 
 int blinkingPeriod = 600; /// milisecunde
 
-int blueLedBlinking_25 = false;
-int lastBlueLedBlinking_25 = false;
-int lastBlink_25 = 0;
+int blueLedBlinking25 = false;
+int lastblueLedBlinking25 = false;
+int lastBlink25 = 0;
 
-int blueLedBlinking_50 = false;
-int lastBlueLedBlinking_50 = false;
-int lastBlink_50 = 0;
+int blueLedBlinking50 = false;
+int lastblueLedBlinking50 = false;
+int lastBlink50 = 0;
 
-int blueLedBlinking_75 = false;
-int lastBlueLedBlinking_75 = false;
-int lastBlink_75 = 0;
+int blueLedBlinking75 = false;
+int lastblueLedBlinking75 = false;
+int lastBlink75 = 0;
 
-int blueLedBlinking_100 = false;
-int lastBlueLedBlinking_100 = false;
-int lastBlink_100 = 0;
+int blueLedBlinking100 = false;
+int lastblueLedBlinking100 = false;
+int lastBlink100 = 0;
 
 int charging = false;
 
@@ -50,18 +51,18 @@ void StartCharging() {
   digitalWrite(PIN_RGB_LED_GREEN, LOW);
   digitalWrite(PIN_RGB_LED_RED, HIGH);
   chargingTimerStart = millis();
-  blueLedBlinking_25 = true;
+  blueLedBlinking25 = true;
   charging = true;
-  Serial.print("Started charging at ");
-  Serial.print(millis());
-  Serial.print("\n");
+  //Serial.print("Started charging at ");
+  //Serial.print(millis());
+  //Serial.print("\n");
 }
 
 void StopCharging() {
-  blueLedBlinking_25 = false;
-  blueLedBlinking_50 = false;
-  blueLedBlinking_75 = false;
-  blueLedBlinking_100 = false;
+  blueLedBlinking25 = false;
+  blueLedBlinking50 = false;
+  blueLedBlinking75 = false;
+  blueLedBlinking100 = false;
   digitalWrite(PIN_BLUE_LED_TWENTYFIVE, 0);
   digitalWrite(PIN_BLUE_LED_FIFTY, 0);
   digitalWrite(PIN_BLUE_LED_SEVENTYFIVE, 0);
@@ -76,7 +77,7 @@ void StopChargingForce() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  ///Serial.begin(9600);
   pinMode(PIN_BUTON_STOP, INPUT_PULLUP);
   pinMode(PIN_BUTON_START, INPUT_PULLUP);
   for(int i = 4; i <= 10; ++i)
@@ -104,7 +105,7 @@ void loop() {
     }
   }
 
-  if((millis() - lastStopDebounceTime) > debounceDelay) {
+  if((millis() - lastStopDebounceTime) > debounceDelayStop) {
     if(stopButtonReading != stopButtonState) {
       stopButtonState = stopButtonReading;
       if(stopButtonReading == LOW && lastStopButtonState == HIGH)
@@ -120,19 +121,19 @@ void loop() {
 
   if(millis() - chargingTimerStart > chargingTime) {
     if(millis() - chargingTimerStart <= chargingTime + 4000) {
-      blueLedBlinking_25 = true;
-      blueLedBlinking_50 = true;
-      blueLedBlinking_75 = true;
-      blueLedBlinking_100 = true;
-      if(lastBlueLedBlinking_25 == false) {
+      blueLedBlinking25 = true;
+      blueLedBlinking50 = true;
+      blueLedBlinking75 = true;
+      blueLedBlinking100 = true;
+      if(lastblueLedBlinking25 == false) {
         digitalWrite(PIN_BLUE_LED_HUNDRED, HIGH);
         digitalWrite(PIN_BLUE_LED_SEVENTYFIVE, HIGH);
         digitalWrite(PIN_BLUE_LED_FIFTY, HIGH);
         digitalWrite(PIN_BLUE_LED_TWENTYFIVE, HIGH);
-        lastBlink_25 = millis();
-        lastBlink_50 = millis();
-        lastBlink_75 = millis();
-        lastBlink_100 = millis();
+        lastBlink25 = millis();
+        lastBlink50 = millis();
+        lastBlink75 = millis();
+        lastBlink100 = millis();
       }
     }
     else
@@ -142,14 +143,14 @@ void loop() {
   if(charging) {
     if(millis() - chargingTimerStart <= chargingTime) {
       if(millis() - chargingTimerStart >= chargingTime / 4.0 * 3) {
-        blueLedBlinking_100 = true;
+        blueLedBlinking100 = true;
 
-        blueLedBlinking_75 = false;
-        blueLedBlinking_50 = false;
-        blueLedBlinking_25 = false;
-        if(lastBlueLedBlinking_100 == false) {
-          Serial.print("100 set blinking\n");
-          lastBlink_100 = millis();
+        blueLedBlinking75 = false;
+        blueLedBlinking50 = false;
+        blueLedBlinking25 = false;
+        if(lastblueLedBlinking100 == false) {
+          ///Serial.print("100 set blinking\n");
+          lastBlink100 = millis();
           digitalWrite(PIN_BLUE_LED_HUNDRED, HIGH);
           digitalWrite(PIN_BLUE_LED_SEVENTYFIVE, HIGH);
           digitalWrite(PIN_BLUE_LED_FIFTY, HIGH);
@@ -158,14 +159,14 @@ void loop() {
       }
       else
         if(millis() - chargingTimerStart >= chargingTime / 2.0) {
-          blueLedBlinking_75 = true;
+          blueLedBlinking75 = true;
 
-          blueLedBlinking_100 = false;
-          blueLedBlinking_50 = false;
-          blueLedBlinking_25 = false;
-          if(lastBlueLedBlinking_75 == false) {
-            lastBlink_75 = millis();
-            Serial.print("75 set blinking\n");
+          blueLedBlinking100 = false;
+          blueLedBlinking50 = false;
+          blueLedBlinking25 = false;
+          if(lastblueLedBlinking75 == false) {
+            lastBlink75 = millis();
+           /// Serial.print("75 set blinking\n");
             digitalWrite(PIN_BLUE_LED_SEVENTYFIVE, HIGH);
             digitalWrite(PIN_BLUE_LED_FIFTY, HIGH);
             digitalWrite(PIN_BLUE_LED_TWENTYFIVE, HIGH);
@@ -173,65 +174,65 @@ void loop() {
         }
         else
           if(millis() - chargingTimerStart >= chargingTime / 4.0) {
-            blueLedBlinking_50 = true;
+            blueLedBlinking50 = true;
 
-            blueLedBlinking_75 = false;
-            blueLedBlinking_100 = false;
-            blueLedBlinking_25 = false;
-            if(lastBlueLedBlinking_50 == false) {
-              lastBlink_50 = millis();
+            blueLedBlinking75 = false;
+            blueLedBlinking100 = false;
+            blueLedBlinking25 = false;
+            if(lastblueLedBlinking50 == false) {
+              lastBlink50 = millis();
               digitalWrite(PIN_BLUE_LED_FIFTY, HIGH);
               digitalWrite(PIN_BLUE_LED_TWENTYFIVE, HIGH);
-              Serial.print("50 set blinking\n");
+              ///Serial.print("50 set blinking\n");
             }
           }
           else {
-            blueLedBlinking_25 = true;
+            blueLedBlinking25 = true;
             
-            blueLedBlinking_50 = false;
-            blueLedBlinking_75 = false;
-            blueLedBlinking_100 = false;
-            if(lastBlueLedBlinking_25 == false) {
+            blueLedBlinking50 = false;
+            blueLedBlinking75 = false;
+            blueLedBlinking100 = false;
+            if(lastblueLedBlinking25 == false) {
               digitalWrite(PIN_BLUE_LED_TWENTYFIVE, HIGH);
-              lastBlink_25 = millis();
-              Serial.print("25 set blinking\n");
+              lastBlink25 = millis();
+             /// Serial.print("25 set blinking\n");
             }
           }
     }
   }
   
-  if(blueLedBlinking_25) {
-    if(millis() - lastBlink_25 >= blinkingPeriod) {
-      lastBlink_25 = millis();
+  if(blueLedBlinking25) {
+    if(millis() - lastBlink25 >= blinkingPeriod) {
+      lastBlink25 = millis();
       digitalWrite(PIN_BLUE_LED_TWENTYFIVE, !digitalRead(PIN_BLUE_LED_TWENTYFIVE));
     }
   }
 
-  if(blueLedBlinking_50) {
-    if(millis() - lastBlink_50 >= blinkingPeriod) {
-      lastBlink_50 = millis();
+  if(blueLedBlinking50) {
+    if(millis() - lastBlink50 >= blinkingPeriod) {
+      lastBlink50 = millis();
       digitalWrite(PIN_BLUE_LED_FIFTY, !digitalRead(PIN_BLUE_LED_FIFTY));
     }
   }
 
-  if(blueLedBlinking_75) {
-    if(millis() - lastBlink_75 >= blinkingPeriod) {
-      lastBlink_75 = millis();
+  if(blueLedBlinking75) {
+    if(millis() - lastBlink75 >= blinkingPeriod) {
+      lastBlink75 = millis();
       digitalWrite(PIN_BLUE_LED_SEVENTYFIVE, !digitalRead(PIN_BLUE_LED_SEVENTYFIVE));
     }
   }
 
-  if(blueLedBlinking_100) {
-    if(millis() - lastBlink_100 >= blinkingPeriod) {
-      lastBlink_100 = millis();
+  if(blueLedBlinking100) {
+    if(millis() - lastBlink100 >= blinkingPeriod) {
+      lastBlink100 = millis();
       digitalWrite(PIN_BLUE_LED_HUNDRED, !digitalRead(PIN_BLUE_LED_HUNDRED));
     }
   }
   lastStartButtonState = startButtonReading;
   lastStopButtonState = stopButtonReading;
-  lastBlueLedBlinking_25 = blueLedBlinking_25;
-  lastBlueLedBlinking_50 = blueLedBlinking_50;
-  lastBlueLedBlinking_75 = blueLedBlinking_75;
-  lastBlueLedBlinking_100 = blueLedBlinking_100;
+  lastblueLedBlinking25 = blueLedBlinking25;
+  lastblueLedBlinking50 = blueLedBlinking50;
+  lastblueLedBlinking75 = blueLedBlinking75;
+  lastblueLedBlinking100 = blueLedBlinking100;
 }
 
