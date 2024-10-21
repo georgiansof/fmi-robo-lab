@@ -1,2 +1,2 @@
 Repo for Robotics introduction course. \
-Check README of each mini-project for details about them (:
+Check README of each project for details about them (:
