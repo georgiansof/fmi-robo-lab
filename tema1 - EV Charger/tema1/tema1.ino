@@ -73,7 +73,7 @@ void StopCharging() {
 }
 
 void StopChargingForce() {
-  chargingTimerStart = (int)millis() - chargingTime;
+  chargingTimerStart = (long)millis() - chargingTime;
 }
 
 void setup() {
