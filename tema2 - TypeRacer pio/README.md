@@ -30,7 +30,7 @@ Poza setup hardware:
 ![WhatsApp Image 2024-11-04 at 11 08 44_87bb2a84](https://github.com/user-attachments/assets/527c3b5e-3256-4297-994c-99935f67ba44)
 
 Video functionalitate:
-
+[https://youtube.com/shorts/qpdwpxUL940?feature=share]
 
 Schema electrica: 
 ![schema tema 2](https://github.com/user-attachments/assets/9887885a-8dd8-4dc1-8054-7a46e3c05cfa)
