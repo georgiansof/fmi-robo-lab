@@ -1,11 +1,12 @@
 #include <Arduino.h>
-#include <avr/interrupt.h> // Library for working with interrupts
+#include <avr/interrupt.h> 
 
 // Constants
 const int STARTSTOPBUTTONPIN = 2;
 const int DIFFICULTYBUTTONPIN = 3;
-const unsigned long ROUND_DURATION_MS = 30000; // 30 seconds
-const unsigned long COUNTDOWN_DURATION_MS = 3000; // 3 seconds countdown
+const unsigned long ROUND_DURATION_MS = 30000;
+const unsigned long COUNTDOWN_DURATION_MS = 3000; // countdown
+const unsigned long ERROR_DISPLAY_DURATION_MS = 500; //  error display duration
 
 // Enum for difficulty
 enum Difficulty {EASY = 0, MEDIUM, HARD};
@@ -13,12 +14,19 @@ enum Difficulty {EASY = 0, MEDIUM, HARD};
 // Global Variables
 bool gameStarted = false;
 bool countdownActive = false;
+bool errorDisplayed = false;
 unsigned long roundStartTime;
 unsigned long countdownStartTime;
+unsigned long errorDisplayStartTime;
 Difficulty chosenDifficulty = EASY;
 int score = 0;
 String currentWord;
 String userInput = "";
+volatile int timerOverflowCounter = 0;
+
+unsigned long lastBlinkTime = 0;
+bool ledOnDuringCountdown = false;
+
 
 // Word Dictionary
 const char* wordDictionary[] = {
@@ -29,7 +37,6 @@ const char* wordDictionary[] = {
 };
 const int wordCount = sizeof(wordDictionary) / sizeof(wordDictionary[0]);
 
-// RGB LED Class
 class RGBLED {
   const int redPin, greenPin, bluePin;
 
@@ -66,7 +73,6 @@ public:
   }
 };
 
-// Button Class without function pointer
 class Button {
 protected:
   const int pin;
@@ -93,7 +99,7 @@ public:
   }
 };
 
-// Derived Button Classes
+
 class StartStopButton : public Button {
 public:
   using Button::Button;
@@ -113,16 +119,27 @@ void startCountdown();
 void startRound();
 void updateDifficulty();
 void generateRandomWord();
-void checkInput();
+void checkCharacterInput(char ch);
+void handleBackspace();
+void resetErrorDisplay();
 
 // Instances
-RGBLED rgbLed(9, 10, 11); // Example pins for RGB LED
-StartStopButton startStopButton(STARTSTOPBUTTONPIN, FALLING, 100);
-DifficultyButton difficultyButton(DIFFICULTYBUTTONPIN, FALLING, 100);
+RGBLED rgbLed(4, 5, 6); // Example pins for RGB LED
+StartStopButton startStopButton(STARTSTOPBUTTONPIN, FALLING, 1000);
+DifficultyButton difficultyButton(DIFFICULTYBUTTONPIN, FALLING, 1000);
 
-// Timer1 ISR for word generation
+// Timer1 ISR for word generation with software counter
 ISR(TIMER1_COMPA_vect) {
-  generateRandomWord();
+  static int counter = 0;
+
+  if (gameStarted) {
+    counter++;
+    
+    if (counter >= timerOverflowCounter) {
+      generateRandomWord();
+      counter = 0; // Reset counter after generating the word
+    }
+  }
 }
 
 // Interrupt Service Routines
@@ -159,26 +176,33 @@ void DifficultyButton::onPress() {
   updateDifficulty();
 }
 
-// Update difficulty message and timer configuration
 void updateDifficulty() {
   const char* difficultyNames[] = {"Easy mode on!", "Medium mode on!", "Hard mode on!"};
   Serial.println(difficultyNames[chosenDifficulty]);
 
-  uint16_t timerInterval;
+  timerOverflowCounter = 0;
+  uint16_t timerInterval = 15625; 
+  
   switch (chosenDifficulty) {
-    case EASY:   timerInterval = 31250; break; // Approx. 2 seconds
-    case MEDIUM: timerInterval = 23438; break; // Approx. 1.5 seconds
-    case HARD:   timerInterval = 15625; break; // Approx. 1 second
+    case EASY:
+      timerOverflowCounter = 150;
+      break;
+    case MEDIUM:
+      timerOverflowCounter = 100;   
+      break;
+    case HARD:
+      timerOverflowCounter = 80;   
+      break;
   }
 
   cli(); // Disable global interrupts
-  TCCR1A = 0; // Reset Timer1 control register A
-  TCCR1B = 0; // Reset Timer1 control register B
-  TCNT1 = 0;  // Initialize counter value to 0
-  OCR1A = timerInterval; // Set compare match register
-  TCCR1B |= (1 << WGM12); // Configure timer1 for CTC mode
-  TCCR1B |= (1 << CS11);  // Prescaler 8, adjust as needed
-  TIMSK1 |= (1 << OCIE1A); // Enable Timer1 compare interrupt
+  TCCR1A = 0; 
+  TCCR1B = 0;
+  TCNT1 = 0;  
+  OCR1A = timerInterval;
+  TCCR1B |= (1 << WGM12); // CTC mode
+  TCCR1B |= (1 << CS11) | (1 << CS10);  
+  TIMSK1 |= (1 << OCIE1A);
   sei(); // Enable global interrupts
 }
 
@@ -186,6 +210,9 @@ void updateDifficulty() {
 void startCountdown() {
   countdownActive = true;
   countdownStartTime = millis();
+  lastBlinkTime = millis(); // Initialize last blink time
+  ledOnDuringCountdown = false;
+  rgbLed.turnOff(); // Ensure the LED is off at the start
   Serial.println("Countdown started...");
 }
 
@@ -197,68 +224,101 @@ void startRound() {
   rgbLed.turnGreen();
   roundStartTime = millis();
   Serial.println("Round started!");
-  updateDifficulty(); // Configure timer for word interval based on difficulty
+  updateDifficulty();
+  
+  generateRandomWord(); // Generate the first word immediately
 }
 
 // Random Word Generation Function
 void generateRandomWord() {
-  int randomIndex = random(0, wordCount); // Random index from 0 to wordCount - 1
+  if(!gameStarted)
+    return;
+  int randomIndex = random(0, wordCount);
   currentWord = wordDictionary[randomIndex];
-  Serial.print("Type this word: ");
+  Serial.print("\nType this word: ");
   Serial.println(currentWord);
+  userInput = ""; // Clear user input for new word
 }
 
-// Check Input Function
-void checkInput() {
-  if (userInput.equals(currentWord)) {
-    score++;
-    rgbLed.turnGreen();
-    generateRandomWord();
-    userInput = ""; // Clear user input after correct word
-  } else {
-    rgbLed.turnRed(); // Turn red if incorrect
+// Character Input Check Function
+void checkCharacterInput(char ch) {
+  if (userInput.length() < currentWord.length()) {
+    if (ch == currentWord[userInput.length()]) {
+      userInput += ch; 
+      if (userInput.equals(currentWord)) { 
+        score++;
+        rgbLed.turnGreen();
+        generateRandomWord();
+      }
+    } else {
+      rgbLed.turnRed();
+      errorDisplayStartTime = millis();
+      errorDisplayed = true;
+    }
   }
 }
 
-// Setup and Main Loop
+// Handle Backspace
+void handleBackspace() {
+  if (userInput.length() > 0) {
+    userInput.remove(userInput.length() - 1);
+  }
+}
+
+// Reset Error Display after 500 ms
+void resetErrorDisplay() {
+  if (errorDisplayed && millis() - errorDisplayStartTime >= ERROR_DISPLAY_DURATION_MS) {
+    rgbLed.turnGreen();
+    errorDisplayed = false;
+  }
+}
+
 void setup() {
   Serial.begin(9600);
-  rgbLed.turnWhite(); // Initial idle state
-  updateDifficulty(); // Set initial difficulty level and configure timer
-  
-  // Attach interrupts
+  rgbLed.turnWhite(); 
+  updateDifficulty();
   attachInterrupt(digitalPinToInterrupt(STARTSTOPBUTTONPIN), startStopButtonISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(DIFFICULTYBUTTONPIN), difficultyButtonISR, FALLING);
 }
 
 void loop() {
-  // Check if button presses need handling
   if (startStopButton.handleButtonPressNextTick) startStopButton.onPress();
   if (difficultyButton.handleButtonPressNextTick) difficultyButton.onPress();
 
-  // Countdown logic
   if (countdownActive) {
+    // Blink the LED every 500 ms
+    if (millis() - lastBlinkTime >= 500) { // 500 ms interval for blinking
+      lastBlinkTime = millis();
+      ledOnDuringCountdown = !ledOnDuringCountdown;
+      if (ledOnDuringCountdown) {
+        rgbLed.turnWhite(); // Turn on LED (white) during countdown
+      } else {
+        rgbLed.turnOff();   // Turn off LED
+      }
+    }
+
+    // Check if countdown is over
     if (millis() - countdownStartTime >= COUNTDOWN_DURATION_MS) {
-      startRound(); // Start the round after countdown
+      startRound(); // End countdown and start the round
     }
   }
 
-  // Round logic
   if (gameStarted && (millis() - roundStartTime >= ROUND_DURATION_MS)) {
     gameStarted = false;
     rgbLed.turnWhite();
     Serial.print("Round ended! Score: ");
     Serial.println(score);
-    TCCR1B &= ~(1 << CS11); // Stop Timer1
+    TCCR1B &= ~(1 << CS11);
   }
 
-  // Read serial input
+  resetErrorDisplay(); 
+
   while (Serial.available() > 0) {
     char ch = Serial.read();
-    if (ch == '\n' || ch == '\r') { // Enter key pressed
-      checkInput();
+    if (ch == '\b') { 
+      handleBackspace();
     } else {
-      userInput += ch; // Collect character input
+      checkCharacterInput(ch); 
     }
   }
 }
