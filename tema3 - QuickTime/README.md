@@ -23,7 +23,7 @@ Descriere task:
   1 x LCD \
   1 x Buzzer \
   Rezistente de 220Ohm si 2K, pentru LED-uri, pullup si corectie pentru LED-urile care nu sunt albastre.   
-  Fire de legatura \
+  Fire de legatura 
 
 ![Poza hardware](https://github.com/user-attachments/assets/483ab4aa-71c9-4b11-91a0-05559e79d509) \
 
