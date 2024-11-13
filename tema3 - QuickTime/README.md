@@ -9,7 +9,7 @@ Descriere task:
 
   Jocul este turn-based, scopul fiind sa apesi cat mai repede butonul corespunzator culorii care apare pe led-ul rgb. Exista trei tipuri de punctaje: sub 0.3s, sub 0.6s si sub 1s. \
   Placa master controleaza inceperea / sfarsitul / game state-ul jocului, transmitand in fiecare runda ce culoare trebuie sa apese player-ul al carui este randul. \
-  Placa slave primeste prin SPI culoarea si o reda led-ului rgb corespunzator player-ului curent si asteapta input. Daca greseste, acesta primeste 0p si primeste feedback auditiv prin buzzer. Daca expira timpul de 1s, buzzerul nu porneste, dar tot 0p se contorizeaza pentru runda respectiva.
+  Placa slave primeste prin SPI culoarea si o reda led-ului rgb corespunzator player-ului curent si asteapta input. Daca greseste, acesta primeste 0p si primeste feedback auditiv prin buzzer. Daca expira timpul de 1s, buzzerul nu porneste, dar tot 0p se contorizeaza pentru runda respectiva. Punctajul se transmite master-ului sub forma de nota (a, b, c), iar master decide cat valoreaza fiecare nota cand primeste inapoi prin SPI litera.
 
   La final placa master afiseaza scorurile fiecarui player si cine a castigat, revenind la meniul principal de unde se poate incepe un nou joc.
 
@@ -21,6 +21,7 @@ Descriere task:
   1 x buton de start \
   1 x servomotor \
   1 x LCD \
+  1 x Potentiometru 10K \
   1 x Buzzer \
   Rezistente de 220Ohm si 2K, pentru LED-uri, pullup si corectie pentru LED-urile care nu sunt albastre.   
   Fire de legatura 
