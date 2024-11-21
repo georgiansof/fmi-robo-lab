@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "*.json.liquid": "json",
+        "*.yaml.liquid": "yaml",
+        "*.md.liquid": "markdown",
+        "*.js.liquid": "liquid-javascript",
+        "*.css.liquid": "liquid-css",
+        "*.scss.liquid": "liquid-scss",
+        "*.xr": "cisco",
+        "*.ios": "cisco",
+        "twi.h": "c",
+        "i2c.h": "c",
+        "usart.h": "c",
+        "mpl3115a2.h": "c",
+        "io.h": "c",
+        "interrupt.h": "c",
+        "delay.h": "c"
+    },
+    "r.lsp.promptToInstall": false
+}
