@@ -28,25 +28,28 @@ Utilitate: ease of access la informatie cand se sta la birou.
     - fire de legătură
 
     Tabel GPIO:
-    | **Dispozitiv**            | **Pin**            | **GPIO ESP32** | **Note**                      |
-    |---------------------------|--------------------|---------------|--------------------------------|
-    | **Display (TFT)**          | **MOSI (SDA)**     | **GPIO 19**    | SPI MOSI comun pentru display    |
-    |                           | **SCLK (CLK)**     | **GPIO 18**    | SPI Clock comun pentru display   |
-    |                           | **CS**             | **GPIO 5**     | Chip Select pentru display            |
-    |                           | **DC**             | **GPIO 16**    | Pin Data/Command pentru display       |
-    |                           | **RST**            | **GPIO 23**    | Reset pentru display                  |
-    |                           | **BL**             | **GPIO 4**     | Control Backlight pentru display      |
-    | **Card SD**               | **MOSI**           | **GPIO 19**    | SPI MOSI comun                |
+    -------------------------------------------------------------------------------------------------------------
+    | **Dispozitiv**            | **Pin**            | **GPIO ESP32** | **Explicații**                          |
+    |---------------------------|--------------------|----------------|-----------------------------------------|
+    |**Display (TFT, integrat)**| **MOSI (SDA)**     | **GPIO 19**    | SPI MOSI comun pentru display           |
+    |                           | **SCLK (CLK)**     | **GPIO 18**    | SPI Clock comun pentru display          |
+    |                           | **CS**             | **GPIO 5**     | Chip Select pentru display              |
+    |                           | **DC**             | **GPIO 16**    | Pin Data/Command pentru display         |
+    |                           | **RST**            | **GPIO 23**    | Reset pentru display                    |
+    |                           | **BL**             | **GPIO 4**     | Control Backlight pentru display        |
+    -------------------------------------------------------------------------------------------------------------
+    | **Card SD**               | **MOSI**           | **GPIO 19**    | SPI MOSI comun                          |
     |                           | **MISO**           | **GPIO 12**    | MISO pentru cardul SD                   |
-    |                           | **SCLK**           | **GPIO 18**    | SPI Clock comun               |
+    |                           | **SCLK**           | **GPIO 18**    | SPI Clock comun                         |
     |                           | **CS**             | **GPIO 13**    | Chip Select pentru cardul SD            |
-    | **Senzor de temperatură** | **SDA**            | **GPIO 21**    | Linia de date I2C                  |
-    |                           | **SCL**            | **GPIO 22**    | Linia de ceas I2C                 |
-    | **Modul RTC (3-wire)**    | **CLK**            | **GPIO 27**    | Pin ceas RTC                  |
-    |                           | **DATA**           | **GPIO 26**    | Pin date RTC                   |
-    |                           | **RST**            | **GPIO 25**    | Pin reset RTC                  |
-
-    ---
+    -------------------------------------------------------------------------------------------------------------
+    | **Senzor de temperatură** | **SDA**            | **GPIO 21**    | Linia de date I2C                       |
+    |                           | **SCL**            | **GPIO 22**    | Linia de ceas I2C                       |
+    -------------------------------------------------------------------------------------------------------------
+    | **Modul RTC (3-wire)**    | **CLK**            | **GPIO 27**    | Pin ceas RTC                            |
+    |                           | **DATA**           | **GPIO 26**    | Pin date RTC                            |
+    |                           | **RST**            | **GPIO 25**    | Pin reset RTC                           |
+    -------------------------------------------------------------------------------------------------------------
 
     Software design:
 
