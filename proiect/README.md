@@ -20,7 +20,7 @@ Utilitate: ease of access la informatie cand se sta la birou.
 
         Lista piese:
     - 1x Placuta ESP32 Wi-Fi, Bluetooth integrate
-    - 1x LCD display HD
+    - 1x LCD display HD (integrat, cu pini GPIO rezervati)
     - 3x Butoane
     - 1x senzor temperatura si presiune pentru interior
     - 1x RTC pentru a pastra timpul chiar daca placuta pierde alimentarea
