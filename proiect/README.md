@@ -59,7 +59,7 @@ Utilitate: ease of access la informatie cand se sta la birou.
     Concluzii:
 -
     Jurnal:
-        - deadline 1 - ideea si o schema bloc preliminara
+        - deadline 1 - ideea si o schema bloc preliminara \
         - deadline 2 - actualizare componente si descriere
 -
     Bibliografie/Resurse:
