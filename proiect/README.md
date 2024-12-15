@@ -31,8 +31,8 @@ Utilitate: ease of access la informatie cand se sta la birou.
     -------------------------------------------------------------------------------------------------------------
     | **Dispozitiv**            | **Pin**            | **GPIO ESP32** | **Explicații**                          |
     |---------------------------|--------------------|----------------|-----------------------------------------|
-    |**Display (TFT, integrat)**| **MOSI (SDA)**     | **GPIO 19**    | SPI MOSI comun pentru display           |
-    |                           | **SCLK (CLK)**     | **GPIO 18**    | SPI Clock comun pentru display          |
+    |**Display (TFT, integrat)**| **MOSI (SDA)**     | **GPIO 19**    | SPI MOSI comun          |
+    |                           | **SCLK (CLK)**     | **GPIO 18**    | SPI Clock comun          |
     |                           | **CS**             | **GPIO 5**     | Chip Select pentru display              |
     |                           | **DC**             | **GPIO 16**    | Pin Data/Command pentru display         |
     |                           | **RST**            | **GPIO 23**    | Reset pentru display                    |
