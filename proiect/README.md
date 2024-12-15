@@ -16,7 +16,7 @@ Utilitate: ease of access la informatie cand se sta la birou.
 
     Hardware design:
         Schema electrică:
-
+![schema electrica ddl2](https://github.com/user-attachments/assets/6f73d5ea-e7e8-4568-a52a-691a51dfbc05)
 
         Lista piese:
     - 1x Placuta ESP32 Wi-Fi, Bluetooth integrate
