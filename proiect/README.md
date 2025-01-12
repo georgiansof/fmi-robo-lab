@@ -1,66 +1,69 @@
     Introducere:
-Ideea de proiect: o rama 'foto' digitala cu conexiune bluetooth la telefon, de la care preia un set de poze, vremea. Ceasul (RTC?) poate fi sincronizat prin internet (wi-fi).
+Ideea de proiect: O rama 'foto' digitala, care afiseaza si data si temperatura interioara.
 Scopul: slideshow poze memorabile si afisare date utile.
-Ideea: Am avut un ceas smart, mi s-a stricat si ii duc lipsa
-Utilitate: ease of access la informatie cand se sta la birou.
+Ideea: Am avut un ceas smart, mi s-a stricat si ii duc lipsa. Ideea initiala folosea Bluetooth si Wifi, dar in timpul implementarii au aparut probleme asa ca am reinventat putin ideea.
+Utilitate: ease of access, amintiri (poze incarcate).
 
     Descriere generala:
-        Initializare: microcontroller-ul preia locatia prin bluetooth pentru a putea prelua automat timpul cu timezone inclus si vremea de afara. Va incarca prima poza din memorie si va incepe slideshow-ul.
-        Butoane: 1x afisare date (vremea, ceasul complet, temperatura interioara, etc - pe un alt ecran pentru 5 secunde, dupa care revine la slideshow de unde a ramas)
-                 1x next photo in slideshow
-                 1x refresh (reia locatia pentru a actualiza datele - ajuta si la debug)
-                 
+        Initializare: Microcontroller-ul foloseste interfata seriala pentru mesaje de debug, I2C/TWI pentru senzorul de temperatura, ThreeWI pentru RTC si SPI pentru SD card. Intern, placa are un SPI separat pentru display. 
+            MC-ul initializeaza toate componentele si porneste o retea Wi-Fi pe care o va folosi pentru a comunica cu un terminal (PC/telefon smart/orice alt dispozitiv cu capacitati IP). 
+        Toata interfata cu MC-ul se face prin Acess Point-ul deschis.    
 
-    Schema bloc initiala:
-![alt text](<schema bloc ddl1-1.png>)
+    Schema bloc:
+![alt text](image.png)
 
     Hardware design:
         Schema electrică:
-![schema electrica ddl2](https://github.com/user-attachments/assets/6f73d5ea-e7e8-4568-a52a-691a51dfbc05)
+![alt text](image-1.png)
 
         Lista piese:
-    - 1x Placuta ESP32 Wi-Fi, Bluetooth integrate
-    - 1x LCD display HD (integrat, cu pini GPIO rezervati)
-    - 3x Butoane
-    - 1x senzor temperatura si presiune pentru interior
+    - 1x Placuta ESP32 Wi-Fi, Display integrat
+    - 1x SD card module
+    - 1x senzor temperatura
     - 1x RTC pentru a pastra timpul chiar daca placuta pierde alimentarea
-    - rezistoare
     - fire de legătură
-
-    Tabel GPIO:
-    -------------------------------------------------------------------------------------------------------------
-    | **Dispozitiv**            | **Pin**            | **GPIO ESP32** | **Explicații**                          |
-    |---------------------------|--------------------|----------------|-----------------------------------------|
-    |**Display (TFT, integrat)**| **MOSI (SDA)**     | **GPIO 19**    | SPI MOSI comun          |
-    |                           | **SCLK (CLK)**     | **GPIO 18**    | SPI Clock comun          |
-    |                           | **CS**             | **GPIO 5**     | Chip Select pentru display              |
-    |                           | **DC**             | **GPIO 16**    | Pin Data/Command pentru display         |
-    |                           | **RST**            | **GPIO 23**    | Reset pentru display                    |
-    |                           | **BL**             | **GPIO 4**     | Control Backlight pentru display        |
-    -------------------------------------------------------------------------------------------------------------
-    | **Card SD**               | **MOSI**           | **GPIO 19**    | SPI MOSI comun                          |
-    |                           | **MISO**           | **GPIO 12**    | MISO pentru cardul SD                   |
-    |                           | **SCLK**           | **GPIO 18**    | SPI Clock comun                         |
-    |                           | **CS**             | **GPIO 13**    | Chip Select pentru cardul SD            |
-    -------------------------------------------------------------------------------------------------------------
-    | **Senzor de temperatură** | **SDA**            | **GPIO 21**    | Linia de date I2C                       |
-    |                           | **SCL**            | **GPIO 22**    | Linia de ceas I2C                       |
-    -------------------------------------------------------------------------------------------------------------
-    | **Modul RTC (3-wire)**    | **CLK**            | **GPIO 27**    | Pin ceas RTC                            |
-    |                           | **DATA**           | **GPIO 26**    | Pin date RTC                            |
-    |                           | **RST**            | **GPIO 25**    | Pin reset RTC                           |
-    -------------------------------------------------------------------------------------------------------------
+    - 1x card SD
+    - 1x Baterie CR2032
 
     Software design:
+        Display-ul este impartit in doua parti: partea de sus, 135px x 135px si cea de jos, 105px x 135px.
+        Partea de sus arata imaginile, iar partea de jos arata informatiile (data, ora, ziua saptamanii, temperatura interioara).
+
+        Initial am incercat sa stochez pe placa imaginile si sa le convertesc in RGB565 direct la afisare, dar nici memoria, nici viteza microprocesorului nu fac fata pentru o interactiune consistenta.
+
+        Microcontroller-ul este server HTTP si raspunde cererilor in reteaua locala, pe IP-ul 192.168.4.1 unde se afla si interfata grafica.
+
+        Partea de procesare a imaginii inainte de RGB565 este facuta in frontend-ul server-ului web, astfel incat placa primeste direct ce trebuie sa afiseze si stocheaza pe cardul SD pentru a nu pierde informatia la urmatorul reboot.
+
+        Informatiile despre timp sunt sincronizate prin HTTP si stocate in modulul RTC, iar temperatura este masurata periodic.
+
+        Cele doua parti ale ecranului sunt independente, informatiile se actualizeaza la secunda, iar slideshow-ul avanseaza dupa 5 secunde.
 
     Rezultate obtinute:
 -
+    ![alt text](image-2.png)
+    ![alt text](<WhatsApp Image 2025-01-13 at 00.19.03_e5dcb533.jpg>)
+
+    Probleme intampinate:
+        - WiFi si Bluetooth folosesc prea multa memorie pentru a fi folosite simultan
+        - Display-urile cu interfata paralela folosesc mult prea multi pini
+        - Incompatibilitati intre versiunea placii si librarii prea noi
+        - Stack overflow (cu si fara crash-uri, din cauza imaginilor prea mari)
+        - Contacte proaste
+        - Soldering
 
     Concluzii:
 -
+    - Un proiect mult mai greu decat m-am gandit initial ca va fi, la un moment dat am crezut ca decid sa renunt.
+    - Embedded consuma foarte mult timp si atentie
+    - Dependentele librariilor in embedded sunt mai rele decat in software dev (nu credeam ca se poate mai rau)
+
     Jurnal:
         - deadline 1 - ideea si o schema bloc preliminara \
-        - deadline 2 - actualizare componente si descriere
+        - deadline 2 - actualizare componente si descriere \
+        - deadline 3 - Memorie depasita. Ideea unui ecran mai mare, extern a picat. Am renuntat la ideea de a conecta prin bluetooth si am folosit WiFi si HTTP (o schimbare foarte buna, privind retrospectiv).
 -
     Bibliografie/Resurse:
-    -   Wowki
+    -   circuit-diagram.org
+    -   docs.arduino.cc
+    -   github.com/Xinyuan-LilyGO/TTGO-T-Display (github-ul placii)
