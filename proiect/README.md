@@ -30,7 +30,7 @@ Microcontroller-ul inițializează toate componentele și pornește o rețea Wi-
 ![alt text](image-1.png)
 
 ### Lista Piese
-- 1x Plăcuță ESP32 Wi-Fi (Display integrat)
+- 1x Plăcuță ESP32 Wi-Fi (Display integrat) - Lilly TTGO
 - 1x SD card module
 - 1x Senzor temperatură
 - 1x RTC (pentru a păstra timpul chiar dacă plăcuța pierde alimentarea)
