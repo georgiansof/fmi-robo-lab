@@ -119,3 +119,4 @@ https://github.com/user-attachments/assets/90fbbebc-b407-4801-a717-986ff88cbca5
 - [circuit-diagram.org](https://circuit-diagram.org)
 - [docs.arduino.cc](https://docs.arduino.cc)
 - [github.com/Xinyuan-LilyGO/TTGO-T-Display](https://github.com/Xinyuan-LilyGO/TTGO-T-Display) (GitHub-ul plăcii)
+- multe forumuri de care nu-mi mai amintesc
