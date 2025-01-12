@@ -5,6 +5,14 @@
 - **Scopul**: Slideshow cu poze memorabile și afișare date utile.
 - **Ideea**: Am avut un ceas smart, mi s-a stricat și îi duc lipsa. Ideea inițială folosea Bluetooth și Wi-Fi, dar în timpul implementării au apărut probleme, așa că am reinventat puțin ideea.
 - **Utilitate**: Ease of access, amintiri (poze încărcate).
+- **Elementul de noutate**: Control prin HTTP
+- **Elemente utilizate din laboratoare**:
+    - USART (Debug prin Serial)
+    - Întreruperi (Cereri HTTP)
+    - RTC
+    - SPI
+    - I2C
+    - ADC (senzor temperatură)
 
 ---
 
@@ -27,6 +35,9 @@ Microcontroller-ul inițializează toate componentele și pornește o rețea Wi-
 
 ## Hardware Design
 ### Schema Electrică
+
+Calibrarea senzorului de temperatură a fost făcută cu un termometru cu mercur, deci nu foarte precis, dar nu a avut nevoie de introducerea unui offset. Datele primite de la senzor sunt foarte bune.
+
 ![alt text](image-1.png)
 
 ### Lista Piese
@@ -41,6 +52,18 @@ Microcontroller-ul inițializează toate componentele și pornește o rețea Wi-
 ---
 
 ## Software Design
+
+### Biblioteci Folosite
+- **WiFi.h**: Driver WiFi
+- **WebServer.h**: Librarie pentru a deschide un server HTTP
+- **TFT_eSPI.h**: Comunicare cu ecranul prin SPI
+- **Wire.h**: Driver I2C pentru senzorul de temperatură
+- **SD.h**: Driver pentru modulul de card SD
+- **SPI.h**: Am folosit un SPI separat față de cel al ecranului pentru că GPIO nu sunt expuși
+- **Ds1302.h**: Driver-ul RTC
+- **ArduinoJson.h**: Procesare fișiere JSON primite prin HTTP, pentru sincronizarea ceasului
+- **Adafruit_BMP085.h**: Driver senzor temperatură
+
 ### Organizare Display
 - **Partea de sus (135px x 135px)**: Afișează imaginile.
 - **Partea de jos (105px x 135px)**: Afișează informațiile (data, ora, ziua săptămânii, temperatura interioară).
@@ -65,7 +88,6 @@ Microcontroller-ul inițializează toate componentele și pornește o rețea Wi-
 https://github.com/user-attachments/assets/90fbbebc-b407-4801-a717-986ff88cbca5
 
 ![WhatsApp Image 2025-01-13 at 00 35 12_40acc5ab](https://github.com/user-attachments/assets/30addc94-98d6-48f6-9d1a-7842bac439dd)
-
 
 ---
 
