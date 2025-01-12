@@ -62,6 +62,9 @@ Microcontroller-ul inițializează toate componentele și pornește o rețea Wi-
 ![alt text](image-2.png)
 ![alt text](<WhatsApp Image 2025-01-13 at 00.19.03_e5dcb533.jpg>)
 
+https://github.com/user-attachments/assets/90fbbebc-b407-4801-a717-986ff88cbca5
+
+
 ---
 
 ## Probleme Întâmpinate
